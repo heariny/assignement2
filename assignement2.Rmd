@@ -1,0 +1,44 @@
+---
+title: "assignement2_1"
+author: "YANG Mengwei"
+date: "10/8/2017"
+output: html_document
+---
+##Exercice1
+
+**Question 1a**
+
+```{r echo=FALSE}
+source("function.R")
+print(sum_column(iris, "Sepal.Length"))
+print(sum_column(iris, "Species"))
+print(sum_column(warpbreaks, "breaks"))
+```
+
+**Question 1b**
+
+```{r}
+source("function.R")
+print(my_sum(iris$Sepal.Length))
+print(sum_column(iris, "Species"))
+print(sum_column(warpbreaks, "breaks"))
+```
+
+**Question 1c**
+
+```{r}
+source("function.R")
+print(sum_divided_by(iris$Sepal.Length, 12))
+print(sum_divided_by(iris$Species, 22))
+print(sum_divided_by(iris$Sepal.Length, "Not numeric"))
+print(sum_divided_by(warpbreaks$breaks, -12))
+```
+
+**Question 1d**
+```{r}
+source("function.R")
+print(my_mean(iris$Sepal.Length))
+print(my_mean(iris$Species))
+print(my_mean(warpbreaks$breaks))
+```
+
