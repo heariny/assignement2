@@ -171,6 +171,63 @@ p_new<-ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted",y="(..count..)"
 print(p_new)
 
 ```
+
 Different that the difference_in_medians before, my new_test_statistic take all the same arguments but return a stable number 0.1, so compare to the old graphe who describe the location of real median observed in the real word, this graphe describe the relation between a assuming median and the distribution of the medians of pretentiong one specie, this might present an evenment like: someone assume that in one specie the flower sepal width might have a difference of 0.1, but when he saw this graph he knows in reality the real flowers generally have the same sepal width, and the difference rarely bigger than 0.1.
 
 **Question 3g**
+
+```{r}
+source("function.R")
+ptest <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
+right<-permutation_pvalue_right (ptest)
+left<-permutation_pvalue_left (ptest)
+print(left)
+print(right)
+```
+
+According to the histogramme based on the function  permutation_twogroups,the real median is in the at left or at right present the real data is bigger or smaller than the most of fake data, so if in the end the median line is at the right side that means in the reality the median is bigger than median in the fake data.
+Let's take the example of oranges. Suppose there are two kinds of oranges, south orange is smaller that north orange, but we assume they are  the same kind and distribut their weight informations just like we did in the randomize function and calculate their medians differences, then draw the histogramme, and draw the line of real median by using median of weigh of north oranges sabtract the median of weight of south oranges and their difference will be much bigger than we assume they are the same,and in the end the real median will be in the extreme right. So We'd predict that the difference in the medians statistic would be extreme on the right side if our *Hypothesis B* were that south orange is smaller that north orange.In which case, we would use the function permutation_pvalue_right, because we'll get a very samll p to prouve our hypothesie.
+(I'm not very sure if I understand this question.....)
+
+**Question 3h**
+Blue vline-------------iris(-0.2)
+Red vline--------------iris_subset_1 data median(-0.3)
+Green vline------------iris_subset_2 data median(0.08)
+
+```{r}
+source("function.R")
+
+iris_subset_1 <- iris[c(89:94, 108:112),]
+iris_subset_2 <- iris[88:114,]
+median_sub_1<-difference_in_medians(iris_subset_1, "Sepal.Width", "Species", "versicolor", "virginica")
+median_sub_2<-difference_in_medians(iris_subset_2, "Sepal.Width", "Species", "versicolor", "virginica")
+median_iris <-difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica")
+
+
+p_sub_2 <- permutation_twogroups(iris_subset_2, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
+
+ptest_d_2<- tibble::as_tibble(p_sub_2["permuted"])
+
+p_2<-ggplot2::ggplot(ptest_d_2, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(ptest_new$observed)),color="green",size=2)+ggplot2::geom_vline(xintercept=difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica"),color = "blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_1,color="red",size=2)
+p_2<- p_2 + ggplot2::ggtitle("iris_subset_2")
+print(p_2)
+
+p_sub_1 <- permutation_twogroups(iris_subset_1, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
+
+ptest_d_1<- tibble::as_tibble(p_sub_1["permuted"])
+
+p_1<-ggplot2::ggplot(ptest_d_1, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(ptest_new$observed)),color="red",size=2)+ggplot2::geom_vline(xintercept=difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica"),color = "blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_2,color="green",size=2)
+p_1<- p_1 + ggplot2::ggtitle("iris_subset_1")
+print(p_1)
+
+if(!exists(".Random.seed")) set.seed(NULL)
+previous_seed <- .Random.seed
+set.seed(1)
+ptest <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
+set.seed(previous_seed)
+ptest_d <- tibble::as_tibble(ptest["permuted"])
+
+p<-ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(ptest$observed)),color="blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_1,color="red",size=2)+ggplot2::geom_vline(xintercept=median_sub_2,color="green",size=2)
+print(p)
+```
+

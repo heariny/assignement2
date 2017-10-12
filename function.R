@@ -101,8 +101,19 @@ permutation_twogroups <- function(d, var, grouping_var, group1, group2, statisti
 
 #---------------10function----------------------------#
 new_test_statistic<-function(d, var, grouping_var, group1, group2){
-  d_1 <- dplyr::filter(d, get(grouping_var) == group1)
-  d_2 <- dplyr::filter(d, get(grouping_var) == group2)
   result<-0.1
   return(result)
+}
+
+#---------------11function----------------------------#
+#分别计算x=0左边和右边分布的数量的百分比
+permutation_pvalue_right <- function(p) {
+  n_above <- sum(p$permuted >= p$observed)
+  n_samples <- length(p$permuted)
+  return((n_above + 1)/(n_samples + 1))
+}
+permutation_pvalue_left <- function(p) {
+  n_below <- sum(p$permuted <= p$observed)
+  n_samples <- length(p$permuted)
+  return((n_below + 1)/(n_samples + 1))
 }
