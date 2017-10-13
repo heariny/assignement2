@@ -192,7 +192,7 @@ Let's take the example of oranges. Suppose there are two kinds of oranges, south
 **Question 3h**
 Blue vline-------------iris(-0.2)
 Red vline--------------iris_subset_1 data median(-0.3)
-Green vline------------iris_subset_2 data median(0.08)
+Green vline------------iris_subset_2 data median(-0.25)
 
 ```{r}
 source("function.R")
@@ -202,32 +202,49 @@ iris_subset_2 <- iris[88:114,]
 median_sub_1<-difference_in_medians(iris_subset_1, "Sepal.Width", "Species", "versicolor", "virginica")
 median_sub_2<-difference_in_medians(iris_subset_2, "Sepal.Width", "Species", "versicolor", "virginica")
 median_iris <-difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica")
+print (median_sub_1)
+print (median_sub_2)
 
 
+#-------------------------------iris_subset_2---------------------------------------#
 p_sub_2 <- permutation_twogroups(iris_subset_2, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
 
 ptest_d_2<- tibble::as_tibble(p_sub_2["permuted"])
 
-p_2<-ggplot2::ggplot(ptest_d_2, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(ptest_new$observed)),color="green",size=2)+ggplot2::geom_vline(xintercept=difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica"),color = "blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_1,color="red",size=2)
+p_2<-ggplot2::ggplot(ptest_d_2, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(p_sub_2$observed)),color="green",size=2)+ggplot2::geom_vline(xintercept=difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica"),color = "blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_1,color="red",size=2)
 p_2<- p_2 + ggplot2::ggtitle("iris_subset_2")
 print(p_2)
 
+
+#-------------------------------iris_subset_1---------------------------------------#
 p_sub_1 <- permutation_twogroups(iris_subset_1, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
 
 ptest_d_1<- tibble::as_tibble(p_sub_1["permuted"])
 
-p_1<-ggplot2::ggplot(ptest_d_1, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(ptest_new$observed)),color="red",size=2)+ggplot2::geom_vline(xintercept=difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica"),color = "blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_2,color="green",size=2)
+p_1<-ggplot2::ggplot(ptest_d_1, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(p_sub_1$observed)),color="red",size=2)+ggplot2::geom_vline(xintercept=difference_in_medians(iris, "Sepal.Width", "Species", "versicolor", "virginica"),color = "blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_2,color="green",size=2)
 p_1<- p_1 + ggplot2::ggtitle("iris_subset_1")
 print(p_1)
 
-if(!exists(".Random.seed")) set.seed(NULL)
-previous_seed <- .Random.seed
-set.seed(1)
-ptest <- permutation_twogroups(iris, "Sepal.Width", "Species", "versicolor","virginica",difference_in_medians)
-set.seed(previous_seed)
-ptest_d <- tibble::as_tibble(ptest["permuted"])
 
+
+#-------------------------------iris---------------------------------------#
 p<-ggplot2::ggplot(ptest_d, ggplot2::aes_string(x="permuted",y="(..count..)"))+ggplot2::geom_histogram(fill="yellow",colour="black")+ggplot2::geom_vline(ggplot2::aes(xintercept=median(ptest$observed)),color="blue",size=2)+ggplot2::geom_vline(xintercept=median_sub_1,color="red",size=2)+ggplot2::geom_vline(xintercept=median_sub_2,color="green",size=2)
 print(p)
+
 ```
 
+From these histogramme, I notice that in the iris_subset_1(iris[c(89:94, 108:112),]) and iris_subset_2(iris[88:114,]) datas, the difference between the lenght of these two kinds iris is relatively larger than the iris datas, I guesse maybe because that the datas in these two sections are relatively more incoherence, even they are randomly dictributed, there are more chances to get a larger difference. 
+
+And for the location of vertical lines, on all the three histogramme all the three vertical lines are at the left side, that's means that in the reality the Sepal Width of versicolor is always smaller that the virginca, and among these three datas the iris[88:114,] has the largest distance between the sepal width datas.
+
+```{r}
+source("function.R")
+right_1<-permutation_pvalue_right (p_sub_1)
+left_1<-permutation_pvalue_left (p_sub_1)
+print(left_1)
+print(right_1)
+right_2<-permutation_pvalue_right (p_sub_2)
+left_2<-permutation_pvalue_left (p_sub_2)
+print(left_2)
+print(right_2)
+```

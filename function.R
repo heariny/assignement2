@@ -106,7 +106,7 @@ new_test_statistic<-function(d, var, grouping_var, group1, group2){
 }
 
 #---------------11function----------------------------#
-#分别计算x=0左边和右边分布的数量的百分比
+#分别计算vline左边和右边分布的数量的百分比
 permutation_pvalue_right <- function(p) {
   n_above <- sum(p$permuted >= p$observed)
   n_samples <- length(p$permuted)
